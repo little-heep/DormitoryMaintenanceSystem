@@ -1,0 +1,10 @@
+loginView.py  登陆界面
+
+registerView.py  注册界面
+
+studentView  学生界面，多页面的话新建文件夹装起来
+
+workView  维修工界面，多页面的话新建文件夹装起来
+
+adminView  管理员界面，多页面的话新建文件夹装起来
+
