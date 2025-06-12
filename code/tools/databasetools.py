@@ -37,7 +37,7 @@ def db_add_order(db,order:Order):
         :param db: 数据库连接
         :param order: Order对象
         :return: 是否成功
-        """
+    """
     try:
         cursor = db.cursor()
         sql = """
@@ -448,7 +448,7 @@ def db_order_updatestatus(db,status:int,orderid:int):
             """
 
         # 执行存储过程
-        cursor.execute(sql,status,id)
+        cursor.execute(sql,status,orderid)
 
         # 获取输出参数
         result = cursor.fetchone()
