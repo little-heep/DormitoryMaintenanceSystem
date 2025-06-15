@@ -1,11 +1,14 @@
 import tkinter as tk
 from tkinter import messagebox
 import pyodbc
+
+from code.controllers.student_controller import StudentController
 from code.tools import databasetools as db
 import code.views.maintainer_ui
 from code.controllers.maintainer_controller import MaintenanceController
-from code.models.structs import Maintainer
+from code.models.structs import Maintainer, Student
 from code.views.maintainer_ui import MaintenanceUI
+from code.views.student_ui import StudentUI
 
 
 class LoginApp:
@@ -172,9 +175,6 @@ class LoginApp:
     def _open_role_ui(self, role, username):
         """跳转到对应身份的界面"""
         if role == "维修工":
-
-                # 使用with语句自动管理连接
-
                     cursor = self.cnn.cursor()
 
                     # 更安全的参数化查询
@@ -205,29 +205,31 @@ class LoginApp:
                         root.mainloop()
                     else:
                         messagebox.showerror("错误", "该维修工账号不存在")
-        # if role == "维修工":
-        #     root = tk.Tk()
-        #     current_maintainer = Maintainer(
-        #         mno=self.entry_username.get(),
-        #         mname=,
-        #         mpwd="zhong122",
-        #         mlink="12345678102",
-        #         allscore=6
-        #     )
-        #     # 创建控制器实例
-        #     controller = MaintenanceController(current_maintainer, db)
-        #     # 创建UI实例
-        #     app = maintainer_ui.MaintenanceUI(root, controller)
-        #     root.mainloop()
-        # elif role == "学生":
-        #     student_ui.open(username)
-        # elif role == "管理员":
-        #     admin_ui.open(username)
+        elif role == "学生":
+            cursor = self.cnn.cursor()
 
+            # 更安全的参数化查询
+            cursor.execute("""
+                                       SELECT sno, rno,sname, spwd, slink
+                                       FROM STUDENT
+                                       WHERE sno=?
+                                   """, (username,))
 
+            result = cursor.fetchone()
 
+            if result:
+                # 使用列名访问更安全，不依赖字段顺序
+                current_student = Student(
+                    sno=result[0],
+                    rno = result[1],
+                    sname=result[2],
+                    spwd=result[3],
+                    slink=result[4]
+                )
 
-# 使用示例
-if __name__ == "__main__":
-    app = LoginApp()
-    app.run()
+                # 创建新窗口
+                controller1 = StudentController( self.cnn)
+                app1 = StudentUI(controller1,current_student)
+            else:
+                messagebox.showerror("错误", "该学生账号不存在")
+
