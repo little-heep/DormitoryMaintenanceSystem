@@ -38,10 +38,11 @@ class MaintenanceController:
         }
 
         for row in db_all_order(self.db_conn):
-            if row.status==1:
-                orders['pending'].append(row)
-            else:
-                orders['completed'].append(row)
+            if row.mno==self.current_maintainer.mno:
+                if row.status==1:
+                    orders['pending'].append(row)
+                else:
+                    orders['completed'].append(row)
 
         return orders
 
