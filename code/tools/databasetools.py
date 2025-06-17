@@ -481,7 +481,7 @@ def db_all_student(db) -> List[Student]:
         for row in results:
             student = Student(
                 sno=row[0],
-                mo=row[1],
+                rno=row[1],
                 sname=row[2],
                 spwd=row[3],
                 slink=row[4]
