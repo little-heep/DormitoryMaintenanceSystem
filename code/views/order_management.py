@@ -72,11 +72,11 @@ class OrderManagementWindow:
                 order.ono,
                 order.sno,
                 order.cno,
-                order.otime,
-                order.ftime,
-                order.ostatus,
-                order.oscore,
-                order.ocomment
+                order.starttime,
+                order.finishtime,
+                order.status,
+                order.score,
+                order.comment
             ))
 
     def _update_score(self):

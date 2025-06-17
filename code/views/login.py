@@ -2,11 +2,13 @@ import tkinter as tk
 from tkinter import messagebox
 import pyodbc
 
+from code.controllers.admincontroller import AdminController
 from code.controllers.student_controller import StudentController
 from code.tools import databasetools as db
 import code.views.maintainer_ui
 from code.controllers.maintainer_controller import MaintenanceController
 from code.models.structs import Maintainer, Student
+from code.views.main_window import AdminMainWindow
 from code.views.maintainer_ui import MaintenanceUI
 from code.views.student_ui import StudentUI
 
@@ -232,4 +234,11 @@ class LoginApp:
                 app1 = StudentUI(controller1,current_student)
             else:
                 messagebox.showerror("错误", "该学生账号不存在")
+
+        elif role == "管理员":
+            root = tk.Tk()
+            controller = AdminController()
+            app = AdminMainWindow(root, controller, self.cnn)
+            root.mainloop()
+
 

@@ -131,20 +131,20 @@ class AdminMainWindow:
 
     def open_user_management(self):
         """打开用户管理窗口"""
-        from code.views.adminview.user_management import UserManagementWindow
+        from code.views.user_management import UserManagementWindow
         self._open_child_window(UserManagementWindow)
 
     def open_query_stats(self):
         """打开查询统计窗口"""
-        from code.views.adminview.query_stats import QueryStatsWindow
+        from code.views.query_stats import QueryStatsWindow
         self._open_child_window(QueryStatsWindow)
 
     def open_order_management(self):
         """打开订单管理窗口"""
-        from code.views.adminview.order_management import OrderManagementWindow
+        from code.views.order_management import OrderManagementWindow
         self._open_child_window(OrderManagementWindow)
 
     def open_dorm_management(self):
         """打开宿舍管理窗口"""
-        from code.views.adminview.dorm_management import DormManagementWindow
+        from code.views.dorm_management import DormManagementWindow
         self._open_child_window(DormManagementWindow)

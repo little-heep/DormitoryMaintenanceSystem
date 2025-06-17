@@ -43,6 +43,10 @@ class StudentUI:
                         foreground="#1565C0")
         style.configure('TEntry',
                         fieldbackground="white")  # 输入框白色背景
+        style.configure('Custom.TRadiobutton',
+                             background='#fdffeb',
+                             foreground='black',
+                             font=('微软雅黑', 10))
 
     def create_main_interface(self):
         """创建主界面"""
@@ -86,11 +90,39 @@ class StudentUI:
         self.entry_dorm = ttk.Entry(form_frame, width=30, style='TEntry')
         self.entry_dorm.grid(row=0, column=1, padx=5, pady=5, sticky="w")
 
+        # 问题类型选择
         ttk.Label(form_frame,
-                  text="❓ 问题描述:",
-                  background="#fdffeb").grid(row=1, column=0, padx=5, pady=5, sticky="ne")
-        self.entry_content = tk.Text(form_frame, width=40, height=5, bg="white")
-        self.entry_content.grid(row=1, column=1, padx=5, pady=5, sticky="w")
+                  text="🔧 问题类型:",
+                  background="#fdffeb").grid(row=1, column=0, padx=5, pady=5, sticky="e")
+
+        # 创建分类和具体问题的选择框
+        self.class_var = tk.StringVar()
+        self.content_var = tk.StringVar()
+        self.pay_var = tk.StringVar(value="0")  # 存储支付金额
+
+        # 分类选择框
+        class_frame = ttk.Frame(form_frame)
+        class_frame.grid(row=1, column=1, padx=5, pady=5,sticky="w")
+
+        ttk.Radiobutton(class_frame, text="普通", variable=self.class_var,
+                        value="普通", command=self.update_content_options,
+                        style='Custom.TRadiobutton').pack(side="left")
+
+        ttk.Radiobutton(class_frame, text="特殊", variable=self.class_var,
+                        value="特殊", command=self.update_content_options,
+                        style='Custom.TRadiobutton').pack(side="left")
+
+        # 具体问题选择框
+        ttk.Label(form_frame,
+                  text="🔍 具体问题:",
+                  background="#fdffeb").grid(row=2, column=0, padx=5, pady=5, sticky="e")
+
+        self.content_combobox = ttk.Combobox(form_frame, textvariable=self.content_var, width=30)
+        self.content_combobox.grid(row=2, column=1, padx=5, pady=5, sticky="w")
+
+        # 初始化分类为"普通"
+        self.class_var.set("普通")
+        self.update_content_options()
 
         # 提交按钮
         ttk.Button(self.frame_report,
@@ -100,42 +132,85 @@ class StudentUI:
 
         self.tab_control.add(self.frame_report, text="报修上报")
 
+    def update_content_options(self):
+        """根据选择的分类更新具体问题选项"""
+        if self.class_var.get() == "普通":
+            options = [
+                ("空调维修", "A001", "0"),
+                ("衣柜维修", "A002", "0"),
+                ("修灯泡", "A003", "5"),
+                ("修门", "A004", "0")
+            ]
+        else:
+            options = [
+                ("通厕所", "B001", "10"),
+                ("修水管", "B002", "3")
+            ]
+
+        # 更新下拉框选项
+        self.content_combobox['values'] = [opt[0] for opt in options]
+        self.content_options_map = {opt[0]: (opt[1], opt[2]) for opt in options}
+        self.content_combobox.current(0)
+
+    def show_payment_popup(self, amount):
+        """显示支付弹窗"""
+        popup = tk.Toplevel(self.root)
+        popup.title("支付维修费用")
+        popup.geometry("300x200")
+        popup.resizable(False, False)
+
+        ttk.Label(popup, text=f"本次维修需支付: ¥{amount}", font=('微软雅黑', 12)).pack(pady=20)
+
+        # 支付按钮
+        ttk.Button(popup, text="确认支付",
+                   command=lambda: self.process_payment(popup, amount)).pack(pady=10)
+
+        # 取消按钮
+        ttk.Button(popup, text="取消支付",
+                   command=popup.destroy).pack(pady=10)
+
+    def process_payment(self, popup, amount):
+        """处理支付逻辑"""
+        # 这里可以添加实际的支付处理逻辑
+        popup.destroy()
+        messagebox.showinfo("支付成功", f"已成功支付¥{amount}元", parent=self.root)
+        self.clear_input_fields()
+
     def submit_report(self):
         """处理报修提交"""
         try:
             # 获取输入数据
             dorm = self.entry_dorm.get().strip()
-            content = self.entry_content.get("1.0", tk.END).strip()
+            content = self.content_var.get().strip()
 
             # 验证输入
             if not dorm:
                 raise ValueError("请输入宿舍号")
-            else:
-                print("成功1")
             if not content:
-                raise ValueError("请输入问题描述")
-            else:
-                print("成功2")
-            # 获取问题类型
-            cno = self.student_controller.get_cno_by_description(content)
+                raise ValueError("请选择具体问题")
+
+            # 获取cno和支付金额
+            cno, pay_amount = self.content_options_map.get(content, (None, "0"))
             if not cno:
-                raise ValueError("无法识别问题类型，请更详细地描述问题")
-            else:
-                print("成功3")
-            # 提交报修（修改了判断逻辑）
-            #message 这里要改message是错误，success
-            success,message = self.student_controller.report_issue(
+                raise ValueError("无法识别问题类型")
+
+            # 提交报修
+            success, message = self.student_controller.report_issue(
                 self.current_student.sno,
                 dorm,
-                content
+                content,
+                cno
             )
-            print(4)
+
             if not success:
                 raise RuntimeError(f"报修失败: {message}")
-            # 成功处理
-            messagebox.showinfo("成功", "报修成功，维修工已自动分配！", parent=self.root)
-            self.clear_input_fields()
-            print(1)
+
+            # 如果需要支付，显示支付弹窗
+            if pay_amount != "0":
+                self.show_payment_popup(pay_amount)
+            else:
+                messagebox.showinfo("成功", "报修成功，维修工已自动分配！", parent=self.root)
+                self.clear_input_fields()
 
         except Exception as e:
             messagebox.showerror("错误", str(e), parent=self.root)
@@ -143,7 +218,8 @@ class StudentUI:
     def clear_input_fields(self):
         """清空输入框"""
         self.entry_dorm.delete(0, tk.END)
-        self.entry_content.delete("1.0", tk.END)
+        self.class_var.set("普通")
+        self.update_content_options()
     # =================== 订单查询模块 ===================
     def setup_query_tab(self):
         self.frame_query = ttk.Frame(self.tab_control, style='TFrame')

@@ -11,7 +11,7 @@ class StudentController:
         self.db_conn = db
 
     #生成新订单
-    def report_issue(self, student_id, dorm, content):
+    def report_issue(self, student_id, dorm, content,cno):
         cursor = self.db_conn.cursor()
         print(student_id,dorm,content)
         print(type(student_id),type(dorm),type(content))
@@ -40,7 +40,7 @@ class StudentController:
                 ono=0,  # 自增主键
                 sno=student_id,
                 mno=maintainer_id,
-                cno=self.get_cno_by_description(content),
+                cno=cno,
                 mo=dorm,
                 status=1,
                 ocontent=content,
@@ -88,14 +88,5 @@ class StudentController:
             print("数据库查询失败:", e)
             return ("未知", "未知", "未知")  # 兜底返回值
 
-    #通过维修内容获得分类编号
-    def get_cno_by_description(self,content):
-        cursor = self.db_conn.cursor()
-        cursor.execute("SELECT cno, ccontent FROM CLASSIFY WHERE cno IS NOT NULL")
-        categories = cursor.fetchall()
 
-        for cno, ccontent in categories:
-            if ccontent in content:  # 简单包含关系判断
-                return cno
-        return None  # 没有匹配上
 

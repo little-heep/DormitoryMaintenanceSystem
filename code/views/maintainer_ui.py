@@ -1,7 +1,6 @@
 import tkinter as tk
 from datetime import datetime
 from tkinter import ttk, messagebox, font
-
 from code.controllers.maintainer_controller import MaintenanceController, Order, Maintainer, OrderStatus
 
 
