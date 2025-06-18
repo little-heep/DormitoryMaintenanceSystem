@@ -1,5 +1,10 @@
+import re
 import tkinter as tk
+from operator import truediv
 from tkinter import messagebox
+
+from sympy import false
+
 from code.views.login import LoginApp
 from code.models.structs import *
 from code.tools.databasetools import *
@@ -184,13 +189,33 @@ class RegisterPage:
             messagebox.showerror("错误", "请填写所有必填字段！")
             return
 
-        if password != confirm_password:
-            messagebox.showerror("错误", "两次输入的密码不一致！")
+        pwdpattern = r'^(?=.*[0-9])(?=.*[a-zA-Z])[a-zA-Z0-9]{6,10}$'
+        if not re.match(pwdpattern, password):
+            messagebox.showerror("密码错误🔒", "密码应为包含数字和字母的6-10位字符串")
             return
 
-        if role == "学生" and not dormitory:
-            messagebox.showerror("错误", "请填写宿舍号！")
+        if password != confirm_password:
+            messagebox.showerror("密码错误🔒", "两次输入的密码不一致！")
             return
+
+        linkpattern = r'^1[3-9]\d{9}$'
+        if not re.match(linkpattern,contact):
+            messagebox.showerror("联系方式错误📞", "联系方式应为11位中国式电话号码！")
+            return
+
+        if role == "学生" :
+            if not dormitory:
+                messagebox.showerror("宿舍号错误🏠", "请填写宿舍号！")
+                return
+            romlis=db_all_room(self.conn)
+            exi=False
+            for i in romlis:
+                if dormitory==i.mo:
+                    exi=True
+                    break
+            if not exi:
+                messagebox.showerror("宿舍号错误🏠", "宿舍号不存在！")
+                return
 
         # 保存到数据库
         if role == "学生":

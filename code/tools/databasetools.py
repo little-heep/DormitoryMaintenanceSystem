@@ -481,7 +481,7 @@ def db_all_student(db) -> List[Student]:
         for row in results:
             student = Student(
                 sno=row[0],
-                rno=row[1],
+                mo=row[1],
                 sname=row[2],
                 spwd=row[3],
                 slink=row[4]
@@ -631,6 +631,29 @@ def db_all_order(db) -> List[Order]:
     except Exception as e:
         print(f"查询所有订单失败: {e}")
         return []
+
+#查询所有宿舍
+def db_all_room(db)->List[Rooms]:
+    try:
+        cursor = db.cursor()
+        sql = "SELECT * FROM ROOMS"
+        cursor.execute(sql)
+        results = cursor.fetchall()
+
+        rooms = []
+        for row in results:
+            r = Rooms(
+                mo=row[0],
+                ano=row[1],
+                address=row[2],
+                assert_=row[3]
+            )
+            rooms.append(r)
+        return rooms
+    except Exception as e:
+        print(f"查询所有宿舍失败: {e}")
+        return []
+
 
 #查询各类报修类别的频率
 def db_class_frequency(db) -> List[Tuple[str, int]]:

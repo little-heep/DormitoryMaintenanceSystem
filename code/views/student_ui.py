@@ -1,7 +1,8 @@
+import re
 import tkinter as tk
 from tkinter import ttk, messagebox
 from code.controllers.student_controller import StudentController
-from code.tools.databasetools import db_student_update
+from code.tools.databasetools import db_student_update, db_all_room
 
 
 class StudentUI:
@@ -535,6 +536,10 @@ class StudentUI:
             updated_fields = []
 
             if phone:
+                linkpattern = r'^1[3-9]\d{9}$'
+                if not re.match(linkpattern, phone):
+                    messagebox.showerror("联系方式错误📞", "联系方式应为11位中国式电话号码！")
+                    return
                 if db_student_update(self.student_controller.db_conn, 2, phone, self.current_student.sno):
                     updated_fields.append("联系方式")
                     self.info_vars["联系方式"].set(phone)
@@ -543,6 +548,15 @@ class StudentUI:
                     success = False
 
             if dorm:
+                romlis = db_all_room(self.student_controller.db_conn)
+                exi = False
+                for i in romlis:
+                    if dorm == i.mo:
+                        exi = True
+                        break
+                if not exi:
+                    messagebox.showerror("宿舍号错误🏠", "宿舍号不存在！")
+                    return
                 if db_student_update(self.student_controller.db_conn, 1, dorm, self.current_student.sno):
                     updated_fields.append("宿舍号")
                     self.info_vars["宿舍号"].set(dorm)
@@ -551,6 +565,10 @@ class StudentUI:
                     success = False
 
             if password:
+                pwdpattern = r'^(?=.*[0-9])(?=.*[a-zA-Z])[a-zA-Z0-9]{6,10}$'
+                if not re.match(pwdpattern, password):
+                    messagebox.showerror("密码错误🔒", "密码应为包含数字和字母的6-10位字符串")
+                    return
                 if db_student_update(self.student_controller.db_conn, 0, password, self.current_student.sno):
                     updated_fields.append("密码")
                     self.new_pw.delete(0, tk.END)
