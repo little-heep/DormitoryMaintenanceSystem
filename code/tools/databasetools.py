@@ -503,7 +503,7 @@ def db_student_by_id(db, sno: str) -> Optional[Student]:
         if row:
             return Student(
                 sno=row[0],
-                rno=row[1],
+                mo=row[1],
                 sname=row[2],
                 spwd=row[3],
                 slink=row[4]

@@ -179,7 +179,7 @@ class UserManagementWindow:
             self.student_tree.insert("", "end", values=(
                 student.sno,    # 学号
                 student.sname,  # 姓名
-                student.rno,  # 宿舍
+                student.mo,  # 宿舍
                 student.slink  # 联系方式
             ))
 

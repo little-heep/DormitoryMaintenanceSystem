@@ -54,7 +54,7 @@ class Rooms:
 class Student:
     """学生表结构体"""
     sno: str           # 学号 (PK, 8位字符)
-    rno: Optional[str]  # 房间号 (FK, 可为空)
+    mo: Optional[str]  # 房间号 (FK, 可为空)
     sname: str         # 学生姓名
     spwd: str          # 学生密码
     slink: str         # 学生联系方式

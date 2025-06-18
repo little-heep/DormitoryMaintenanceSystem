@@ -223,7 +223,7 @@ class LoginApp:
                 # 使用列名访问更安全，不依赖字段顺序
                 current_student = Student(
                     sno=result[0],
-                    rno = result[1],
+                    mo = result[1],
                     sname=result[2],
                     spwd=result[3],
                     slink=result[4]

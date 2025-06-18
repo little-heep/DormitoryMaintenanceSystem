@@ -22,7 +22,6 @@ from code.views.register import RegisterPage
 
 
 
-
 #操作
 # 创建控制器if __name__ == "__main__":
 if __name__ == "__main__":
