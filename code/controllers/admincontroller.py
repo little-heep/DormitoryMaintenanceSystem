@@ -14,7 +14,7 @@ import code.tools.databasetools as dbtools
 
 class AdminController:
     ##################### 用户管理 ###################
-
+# 学生管理
     def add_student(self, db: pyodbc.Connection, sno: str, mo: Optional[str], sname: str, spwd: str, slink: str):
         new_student = Student(sno=sno, mo=mo, sname=sname, spwd=spwd, slink=slink)
         res,err=dbtools.db_add_student(db, new_student)
