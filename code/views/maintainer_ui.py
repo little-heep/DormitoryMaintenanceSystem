@@ -1,3 +1,4 @@
+import re
 import tkinter as tk
 from datetime import datetime
 from tkinter import ttk, messagebox, font
@@ -618,7 +619,8 @@ class MaintenanceUI:
 
         def save_contact():
             new_contact = contact_var.get()
-            if new_contact:
+            pattern = r'^1[3-9]\d{9}$'
+            if re.match(pattern, new_contact):
                 if self.controller.update_maintainer_link(new_contact):
                     messagebox.showinfo("成功", "联系方式已更新")
                     dialog.destroy()
@@ -627,7 +629,7 @@ class MaintenanceUI:
                 else:
                     messagebox.showerror("错误", "更新失败")
             else:
-                messagebox.showwarning("警告", "联系方式不能为空")
+                messagebox.showwarning("警告", "联系方式必须为11位中国电话号码")
 
         tk.Button(btn_frame, text="取消", command=dialog.destroy).pack(side=tk.LEFT, expand=True, padx=5)
         tk.Button(btn_frame, text="保存", command=save_contact).pack(side=tk.LEFT, expand=True, padx=5)
@@ -672,13 +674,17 @@ class MaintenanceUI:
                 return
 
             if self.controller.current_maintainer.mpwd==old_pwd:
-                if self.controller.update_maintainer_pwd( new_pwd):
-                    messagebox.showinfo("成功", "密码已更新")
-                    dialog.destroy()
-                    self.controller.current_maintainer.mpwd = new_pwd
-                    self.show_profile_page()  # 刷新页面
+                pattern = r'^(?=.*[0-9])(?=.*[a-zA-Z])[a-zA-Z0-9]{6,10}$'
+                if re.match(pattern, new_pwd):
+                    if self.controller.update_maintainer_pwd( new_pwd):
+                        messagebox.showinfo("成功", "密码已更新")
+                        dialog.destroy()
+                        self.controller.current_maintainer.mpwd = new_pwd
+                        self.show_profile_page()  # 刷新页面
+                    else:
+                        messagebox.showerror("错误", "更新失败")
                 else:
-                    messagebox.showerror("错误", "更新失败")
+                    messagebox.showerror("错误","密码为必须包含字母与数字的6-10位字符串")
             else:
                 messagebox.showerror("错误", "旧密码不正确")
 
