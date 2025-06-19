@@ -196,12 +196,12 @@ class StudentUI:
         """处理报修提交"""
         try:
             # 获取输入数据
-            dorm = self.entry_dorm.get().strip()
-            content = self.content_var.get().strip()
 
+            content = self.content_var.get().strip()
+            dorm=self.current_student.mo
+            detail=self.entry_details.get("1.0",tk.END).strip()
             # 验证输入
-            if not dorm:
-                raise ValueError("请输入宿舍号")
+
             if not content:
                 raise ValueError("请选择具体问题")
 
@@ -214,7 +214,7 @@ class StudentUI:
             success, message = self.student_controller.report_issue(
                 self.current_student.sno,
                 dorm,
-                content,
+                detail,
                 cno
             )
 
@@ -233,7 +233,7 @@ class StudentUI:
 
     def clear_input_fields(self):
         """清空输入框"""
-        self.entry_dorm.delete(0, tk.END)
+
         self.class_var.set("普通")
         self.update_content_options()
     # =================== 订单查询模块 ===================
