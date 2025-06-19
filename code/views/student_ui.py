@@ -84,12 +84,19 @@ class StudentUI:
                                     style='TLabelframe')
         form_frame.pack(padx=20, pady=10, fill="x")
 
-        # 表单元素
         ttk.Label(form_frame,
                   text="🏠 宿舍号:",
                   background="#fdffeb").grid(row=0, column=0, padx=5, pady=5, sticky="e")
-        self.entry_dorm = ttk.Entry(form_frame, width=30, style='TEntry')
-        self.entry_dorm.grid(row=0, column=1, padx=5, pady=5, sticky="w")
+        # 从数据库获取当前学生的宿舍号作为默认值
+        student_dorm = self.current_student.mo
+        self.dorm_var = tk.StringVar(value=student_dorm)
+
+        # 创建Combobox并设置自动补全
+        self.combo_dorm = ttk.Combobox(form_frame,
+                                       textvariable=self.dorm_var,
+                                       width=30,
+                                       style='TCombobox')
+        self.combo_dorm.grid(row=0, column=1, padx=5, pady=5, sticky="w")
 
         # 问题类型选择
         ttk.Label(form_frame,
@@ -124,6 +131,14 @@ class StudentUI:
         # 初始化分类为"普通"
         self.class_var.set("普通")
         self.update_content_options()
+
+        # 4. 新增问题详情 (放在最后)
+        ttk.Label(form_frame,
+                  text="📝 问题详情以及预约时间:",
+                  background="#fdffeb").grid(row=3, column=0, padx=5, pady=5, sticky="ne")
+
+        self.entry_details = tk.Text(form_frame, width=30, height=4, wrap="word")
+        self.entry_details.grid(row=3, column=1, padx=5, pady=5, sticky="w")
 
         # 提交按钮
         ttk.Button(self.frame_report,
